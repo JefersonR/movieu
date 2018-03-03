@@ -1,0 +1,67 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion '26.0.2'
+    defaultConfig {
+        applicationId "br.udacity"
+        minSdkVersion 17
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        flavorDimensions "default"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    productFlavors {
+        def STRING = "String"
+        def BOOLEAN = "boolean"
+        def TRUE = "true"
+        def FALSE = "false"
+        def API_HOST = "API_HOST"
+        def LOG = "LOG"
+        def STRING2 = "string"
+        def APPNAME = "app_name"
+        def URL_DEV = '"https://api.themoviedb.org/3/movie/"'
+        def URL_PROD = '"https://api.themoviedb.org/3/movie/"'
+        dev {
+            buildConfigField BOOLEAN, LOG, TRUE
+            buildConfigField STRING, API_HOST, URL_DEV
+            resValue STRING2, APPNAME, "MovieU dev"
+        }
+        prod {
+            buildConfigField BOOLEAN, LOG, FALSE
+            buildConfigField STRING, API_HOST, URL_PROD
+            resValue STRING2, APPNAME, "MovieU"
+        }
+    }
+
+
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support:appcompat-v7:25.4.0'
+    compile 'com.android.support:design:25.4.0'
+    compile 'com.android.support:support-vector-drawable:25.4.0'
+    compile 'com.android.support:cardview-v7:25.4.0'
+    compile 'com.android.support:recyclerview-v7:25.4.0'
+    compile 'com.google.code.gson:gson:2.8.2'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.squareup.retrofit2:retrofit:2.3.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.3.0'
+    compile 'com.squareup.okhttp3:okhttp:3.8.1'
+    compile 'com.squareup.okhttp3:logging-interceptor:3.8.1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.facebook.shimmer:shimmer:0.1.0@aar'
+
+    testCompile 'junit:junit:4.12'
+}
