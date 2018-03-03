@@ -23,7 +23,7 @@ public class NetworkSetup {
 
     public static OkHttpClient getClient() {
         return new OkHttpClient()
-                .newBuilder()
+                .newBuilder() 
                 .dispatcher(buildDispatcher())
                 .addInterceptor( new Interceptor() {
                     @Override
