@@ -17,7 +17,7 @@ public class NetworkSetup {
     private static final String contentType = "Content-Type";
     private static final String appJson     = "application/json";
     private static final String api_key     = "api_key";
-    private static final String key         = "[Sua chave aqui]";
+    private static final String key         = "[add a key aqui]";
     private static final int maxRequest     = 20;
     private static final int timeOut     = 60;
 
