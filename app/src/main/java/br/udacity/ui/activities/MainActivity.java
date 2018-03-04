@@ -7,6 +7,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -81,11 +82,21 @@ public class MainActivity extends BaseActivity implements MoviesAdapter.OnItemCl
 
 
     private void fillLists(RecyclerView recyclerView, RecyclerView.Adapter adapter) {
-        final int spanCount = 2;
         recyclerView.setAdapter(adapter);
-        GridLayoutManager grid = new GridLayoutManager(getMyContext(), spanCount);
+        GridLayoutManager grid = new GridLayoutManager(getMyContext(), numberOfColumns());
         recyclerView.setLayoutManager(grid);
 
+    }
+
+    private int numberOfColumns() {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        // You can change this divider to adjust the size of the poster
+        int widthDivider = 400;
+        int width = displayMetrics.widthPixels;
+        int nColumns = width / widthDivider;
+        if (nColumns < 2) return 2;
+        return nColumns;
     }
 
 

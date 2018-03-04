@@ -16,7 +16,7 @@ import java.util.List;
 public class ResultResponse implements Parcelable {
 
     private int voteCount;
-    private int id;
+    private String id;
     private boolean video;
     @SerializedName("vote_average")
     @Expose
@@ -52,11 +52,11 @@ public class ResultResponse implements Parcelable {
         this.voteCount = voteCount;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -159,7 +159,7 @@ public class ResultResponse implements Parcelable {
 
     protected ResultResponse(Parcel in) {
         voteCount = in.readInt();
-        id = in.readInt();
+        id = in.readString();
         video = in.readByte() != 0x00;
         voteAverage = in.readDouble();
         title = in.readString();
@@ -187,7 +187,7 @@ public class ResultResponse implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(voteCount);
-        dest.writeInt(id);
+        dest.writeString(id);
         dest.writeByte((byte) (video ? 0x01 : 0x00));
         dest.writeDouble(voteAverage);
         dest.writeString(title);

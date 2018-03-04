@@ -2,6 +2,7 @@ package br.udacity.ui.activities;
 
 import android.content.Context;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -12,10 +13,12 @@ import com.squareup.picasso.Picasso;
 import java.text.ParseException;
 
 import br.udacity.R;
+import br.udacity.connection.interfaces.OnSucess;
 import br.udacity.controllers.detailImpl.DetailImpl;
 import br.udacity.models.response.ResultResponse;
 import br.udacity.ui.bases.BaseActivity;
 import br.udacity.utils.DateUtil;
+import retrofit2.Response;
 
 import static br.udacity.ui.activities.MainActivity.MOVIE;
 
@@ -32,6 +35,8 @@ public class MovieDetailActivity extends BaseActivity {
     private ImageView bgheader;
     private TextView txtReviews;
     private TextView txtPlot;
+    private RecyclerView rcVideos;
+    private RecyclerView rcReviews;
 
     @Override
     protected DetailImpl getControllerImpl() {
@@ -50,6 +55,8 @@ public class MovieDetailActivity extends BaseActivity {
         bgheader = (ImageView) findViewById(R.id.bgheader);
         txtReviews = (TextView) findViewById(R.id.txt_reviews);
         txtPlot = (TextView) findViewById(R.id.txt_plot);
+        rcVideos = (RecyclerView) findViewById(R.id.rc_videos);
+        rcReviews = (RecyclerView) findViewById(R.id.rc_reviews);
     }
 
     @Override
@@ -78,6 +85,20 @@ public class MovieDetailActivity extends BaseActivity {
     }
 
     private void populate(ResultResponse movie) {
+        getControllerImpl().getReviews(movie.getId(), new OnSucess() {
+            @Override
+            public void onSucessResponse(Response response) {
+
+            }
+        }, null, null);
+
+        getControllerImpl().getVideos(movie.getId(), new OnSucess() {
+            @Override
+            public void onSucessResponse(Response response) {
+
+            }
+        }, null, null);
+
         final String str_empty = "N/A";
         collapsingToolbar.setTitle(movie.getTitle());
         Picasso.with(MovieDetailActivity.this)

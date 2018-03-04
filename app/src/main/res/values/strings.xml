@@ -29,6 +29,8 @@
     <string name="str_build">Opa, ainda em construção!</string>
     <string name="str_discovery">Descubra</string>
     <string name="label_movie_not_found" tools:ignore="Typos">Ops, nenhum filme encontrado no momento!</string>
+    <string name="label_trailer_not_found" tools:ignore="Typos">Ops, nenhum trailer encontrado no momento!</string>
+    <string name="label_reviews_not_found" tools:ignore="Typos">Ops, nenhum resumo encontrado no momento!</string>
     <string name="label_connection_fail">Desculpe-nos, não foi possível processar a sua solicitação.</string>
     <string name="label_zero">0</string>
     <string name="str_base_img">http://image.tmdb.org/t/p/w185%s</string>
@@ -37,6 +39,8 @@
     <string name="str_sort_popular">Ordenar: Popularidade</string>
     <string name="str_sort_classification">Ordenar: Classificação</string>
     <string name="title_evaluation">Avaliação</string>
+    <string name="title_videos">Trailers</string>
+    <string name="title_reviews">Revisões</string>
     <string name="title_plot">Sinopse</string>
     <string name="str_app_name">MovieU</string>
     <string name="str_no_info">Nenhuma informação disponível.</string>
