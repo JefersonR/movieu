@@ -2,6 +2,7 @@ package br.udacity.ui.activities;
 
 import android.content.Context;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -11,18 +12,24 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 import br.udacity.R;
 import br.udacity.connection.interfaces.OnSucess;
 import br.udacity.controllers.detailImpl.DetailImpl;
 import br.udacity.models.response.ResultResponse;
+import br.udacity.models.response.ReviewsResponse;
+import br.udacity.models.response.VideosResponse;
+import br.udacity.ui.adapters.ReviewAdapter;
+import br.udacity.ui.adapters.TrailerAdapter;
 import br.udacity.ui.bases.BaseActivity;
 import br.udacity.utils.DateUtil;
 import retrofit2.Response;
 
 import static br.udacity.ui.activities.MainActivity.MOVIE;
 
-public class MovieDetailActivity extends BaseActivity {
+public class MovieDetailActivity extends BaseActivity implements TrailerAdapter.OnItemClick {
 
     //UI elements
     private CollapsingToolbarLayout collapsingToolbar;
@@ -88,13 +95,28 @@ public class MovieDetailActivity extends BaseActivity {
         getControllerImpl().getReviews(movie.getId(), new OnSucess() {
             @Override
             public void onSucessResponse(Response response) {
-
+                ReviewsResponse reviewsResponse = (ReviewsResponse) response.body();
+                if(reviewsResponse != null && reviewsResponse.getResults() != null && !reviewsResponse.getResults().isEmpty()){
+                    fillLists(rcReviews,new ReviewAdapter(reviewsResponse.getResults()));
+                }
             }
         }, null, null);
 
         getControllerImpl().getVideos(movie.getId(), new OnSucess() {
             @Override
             public void onSucessResponse(Response response) {
+                VideosResponse videosResponse = (VideosResponse) response.body();
+                List<VideosResponse.Result> list = new ArrayList<>();
+                if(videosResponse != null && videosResponse.getResults() != null && !videosResponse.getResults().isEmpty()){
+                    for(VideosResponse.Result result : videosResponse.getResults()){
+                        if(result.getType().equals("Trailer")){
+                            list.add(result);
+                        }
+                    }
+
+                }
+                fillLists(rcVideos,new TrailerAdapter(list, MovieDetailActivity.this));
+
 
             }
         }, null, null);
@@ -135,6 +157,20 @@ public class MovieDetailActivity extends BaseActivity {
         txtLanguage.setText(language);
         txtReviews.setText(String.format(getString(R.string.str_average), movie.getVoteAverage()));
         txtPlot.setText(movie.getOverview().equals(str_empty) ? getString(R.string.str_no_info) : movie.getOverview());
+    }
+
+    private void fillLists(RecyclerView recyclerView, RecyclerView.Adapter adapter) {
+        recyclerView.setAdapter(adapter);
+        LinearLayoutManager llm = new LinearLayoutManager(getMyContext());
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        llm.setAutoMeasureEnabled(true);
+        recyclerView.setLayoutManager(llm);
+        recyclerView.setNestedScrollingEnabled(false);
+    }
+
+    @Override
+    public void onItemClick(View view, VideosResponse.Result item) {
+
     }
 }
 

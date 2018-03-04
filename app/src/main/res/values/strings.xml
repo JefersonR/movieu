@@ -48,6 +48,7 @@
     <string name="str_title_original">Título original: %s</string>
     <string name="str_release_date">Lançamento: %s</string>
     <string name="str_language">Idioma original: %s</string>
+    <string name="str_author">Autor: %s</string>
 
 
 </resources>
