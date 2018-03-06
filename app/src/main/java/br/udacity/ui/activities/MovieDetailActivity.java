@@ -1,6 +1,8 @@
 package br.udacity.ui.activities;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -44,6 +46,7 @@ public class MovieDetailActivity extends BaseActivity implements TrailerAdapter.
     private TextView txtPlot;
     private RecyclerView rcVideos;
     private RecyclerView rcReviews;
+    private ImageView imgFavorite;
 
     @Override
     protected DetailImpl getControllerImpl() {
@@ -55,6 +58,7 @@ public class MovieDetailActivity extends BaseActivity implements TrailerAdapter.
         collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapse_toolbar);
         progressImg = (ProgressBar) findViewById(R.id.progress_img);
         imgPoster = (ImageView) findViewById(R.id.img_poster);
+        imgFavorite = (ImageView) findViewById(R.id.img_favorite);
         txtTitle = (TextView) findViewById(R.id.txt_title);
         txtOriginal = (TextView) findViewById(R.id.txt_original);
         txtReleased = (TextView) findViewById(R.id.txt_released);
@@ -78,7 +82,12 @@ public class MovieDetailActivity extends BaseActivity implements TrailerAdapter.
 
     @Override
     protected void defineListeners() {
-
+        imgFavorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imgFavorite.setImageResource(R.drawable.ic_favorite_empty);
+            }
+        });
     }
 
     @Override
@@ -170,7 +179,27 @@ public class MovieDetailActivity extends BaseActivity implements TrailerAdapter.
 
     @Override
     public void onItemClick(View view, VideosResponse.Result item) {
+        playVideo(item.getKey());
+    }
 
+    public  void playVideo(final String vID) {
+        final String urlBase = "https://www.youtube.com/watch?v=%s";
+        final String uriBase = "vnd.youtube:%s";
+        final String full = "force_fullscreen";
+
+
+        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(String.format(uriBase,vID)));
+        appIntent.putExtra(full,true);
+        appIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        try {
+            startActivityForResult(appIntent, 1);
+        } catch (Exception ex) {
+            Intent webIntent = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse(String.format(urlBase,vID)));
+            webIntent.putExtra(full,true);
+            webIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivityForResult(webIntent, 1);
+        }
     }
 }
 

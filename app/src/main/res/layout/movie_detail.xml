@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -66,6 +67,7 @@
                 android:layout_marginTop="@dimen/regular_space_one"
                 android:ellipsize="end"
                 android:maxLines="3" />
+
             <TextView
                 android:id="@+id/txt_released"
                 android:layout_width="match_parent"
@@ -80,6 +82,17 @@
                 android:ellipsize="end"
                 android:maxLines="1" />
         </LinearLayout>
+
+        <ImageView
+            android:id="@+id/img_favorite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="@dimen/regular_space_one"
+            android:background="?selectableItemBackground"
+            android:src="@drawable/ic_favorite_full"
+            tools:ignore="ContentDescription" />
     </RelativeLayout>
 
 </android.support.v7.widget.CardView>
