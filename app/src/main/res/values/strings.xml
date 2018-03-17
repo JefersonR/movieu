@@ -49,6 +49,7 @@
     <string name="str_release_date">Lançamento: %s</string>
     <string name="str_language">Idioma original: %s</string>
     <string name="str_author">Autor: %s</string>
+    <string name="content_authority">br.udacity.app</string>
 
 
 </resources>
