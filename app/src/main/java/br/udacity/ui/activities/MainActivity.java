@@ -61,7 +61,7 @@ public class MainActivity extends BaseActivity implements MoviesAdapter.OnItemCl
         request(isPopular, swipeView);
 
         contentResolver = this.getContentResolver();
-        saveContent();
+//        saveContent();
         loadContent();
     }
     @Override
