@@ -9,6 +9,8 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
+import br.udacity.R;
+
 /**
  * Created by Jeferson on 17/03/2018.
  */
@@ -24,7 +26,7 @@ public class MoviesContentProvider extends ContentProvider {
     }
 
     @Override
-    public String getType(Uri uri) {
+    public String getType(@NonNull Uri uri) {
         final int match = MoviesContract.URI_MATCHER.match(uri);
         switch (match) {
             case MoviesContract.Movie.PATH_TOKEN:
@@ -43,7 +45,8 @@ public class MoviesContentProvider extends ContentProvider {
         switch (token) {
             case MoviesContract.Movie.PATH_TOKEN: {
                 long id = db.insert(MoviesContract.Movie.NAME, null, values);
-                getContext().getContentResolver().notifyChange(uri, null);
+                if (getContext() != null)
+                    getContext().getContentResolver().notifyChange(uri, null);
                 return MoviesContract.Movie.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
             }
             default: {
@@ -95,7 +98,7 @@ public class MoviesContentProvider extends ContentProvider {
     public boolean contains(String movieID, Context context) {
         movieDB = new MoviesDB(context);
         SQLiteDatabase db = movieDB.getWritableDatabase();
-        String Query = "Select * from " + MoviesContract.Movie.NAME + " where " + MoviesContract.Movie.Cols.MOVIE_ID + " = " + movieID;
+        String Query = String.format(context.getString(R.string.str_query_contains), MoviesContract.Movie.NAME, MoviesContract.Movie.Cols.MOVIE_ID, movieID);
         Cursor cursor = db.rawQuery(Query, null);
         if (cursor.getCount() <= 0) {
             cursor.close();

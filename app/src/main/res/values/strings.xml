@@ -53,6 +53,7 @@
     <string name="content_authority">br.udacity.app</string>
     <string name="str_trailer">Trailer</string>
     <string name="str_query_delete"> %s = ? </string>
+    <string name="str_query_contains">Select * from %s where %s = %s</string>
 
 
 </resources>
