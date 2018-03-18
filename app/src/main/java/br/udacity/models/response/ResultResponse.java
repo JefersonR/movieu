@@ -44,6 +44,17 @@ public class ResultResponse implements Parcelable {
     @Expose
     private String releaseDate;
 
+    public ResultResponse(String id, double voteAverage, String title, String posterPath, String originalLanguage, String originalTitle, String overview, String releaseDate) {
+        this.id = id;
+        this.voteAverage = voteAverage;
+        this.title = title;
+        this.posterPath = posterPath;
+        this.originalLanguage = originalLanguage;
+        this.originalTitle = originalTitle;
+        this.overview = overview;
+        this.releaseDate = releaseDate;
+    }
+
     public int getVoteCount() {
         return voteCount;
     }

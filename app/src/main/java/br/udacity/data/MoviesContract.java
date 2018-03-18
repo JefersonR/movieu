@@ -40,11 +40,14 @@ public class MoviesContract {
 
         public static class Cols {
             public static final String ID = BaseColumns._ID; // convention
-            public static final String NAME = "movie_name";
-            public static final String ADDRESS  = "movie_addr";
-            public static final String CITY = "movie_city";
-            public static final String STATE = "movie_state";
-            public static final String ZIP = "movie_zip";
+            public static final String MOVIE_ID = "movie_id";
+            public static final String TITLE = "movie_title";
+            public static final String ORIGINAL_TITLE  = "movie_original_title";
+            public static final String RELEASE_DATE = "movie_release_date";
+            public static final String LANGUAGE = "movie_language";
+            public static final String VOTE_AVERAGE = "movie_average";
+            public static final String PLOT = "movie_plot";
+            public static final String POSTER = "poster";
         }
 
     }

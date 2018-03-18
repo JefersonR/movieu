@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 
 public class MoviesDB extends SQLiteOpenHelper {
-    private static final String DATABASE_NAME = "fav_restaurnt.db";
+    private static final String DATABASE_NAME = "fav_movie.db";
     private static final int DATABASE_VERSION = 2;
 
     public MoviesDB(Context ctx){
@@ -21,16 +21,18 @@ public class MoviesDB extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE " +
                 MoviesContract.Movie.NAME+ " ( " +
                 MoviesContract.Movie.Cols.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                MoviesContract.Movie.Cols.NAME + " TEXT NOT NULL, " +
-                MoviesContract.Movie.Cols.ADDRESS 	+ " TEXT , " +
-                MoviesContract.Movie.Cols.CITY + " TEXT, " +
-                MoviesContract.Movie.Cols.STATE + " TEXT, " +
-                MoviesContract.Movie.Cols.ZIP + " TEXT, " +
-                "UNIQUE (" +
-                MoviesContract.Movie.Cols.ID +
-                ") ON CONFLICT REPLACE)"
+                MoviesContract.Movie.Cols.MOVIE_ID  + " TEXT UNIQUE," +
+                MoviesContract.Movie.Cols.TITLE + " TEXT NOT NULL, " +
+                MoviesContract.Movie.Cols.ORIGINAL_TITLE 	+ " TEXT , " +
+                MoviesContract.Movie.Cols.RELEASE_DATE + " TEXT, " +
+                MoviesContract.Movie.Cols.LANGUAGE + " TEXT, " +
+                MoviesContract.Movie.Cols.POSTER + " TEXT, " +
+                MoviesContract.Movie.Cols.PLOT + " TEXT, " +
+                MoviesContract.Movie.Cols.VOTE_AVERAGE + " DOUBLE, " +
+                "UNIQUE (" + MoviesContract.Movie.Cols.ID + ") ON CONFLICT REPLACE)"
         );
     }
+
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {

@@ -1,10 +1,10 @@
 package br.udacity.ui.activities;
 
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
@@ -17,6 +17,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import br.udacity.R;
@@ -28,16 +29,20 @@ import br.udacity.models.response.MoviesResponse;
 import br.udacity.models.response.ResultResponse;
 import br.udacity.ui.adapters.MoviesAdapter;
 import br.udacity.ui.bases.BaseActivity;
-import br.udacity.utils.Log;
 import retrofit2.Response;
+
+import static br.udacity.ui.activities.MainActivity.SortMovies.CLASSIFICATION;
+import static br.udacity.ui.activities.MainActivity.SortMovies.FAVORITE;
+import static br.udacity.ui.activities.MainActivity.SortMovies.POPULAR;
 
 public class MainActivity extends BaseActivity implements MoviesAdapter.OnItemClick {
 
     private RecyclerView rcMovies;
     private SwipeRefreshLayout swipeView;
     private CustomTextView tvNothing;
-    private boolean isPopular = false;
     final static String MOVIE = "MOVIE";
+    final static String ENUM = "ENUM";
+    private SortMovies sort;
 
     ContentResolver contentResolver;
     Cursor cursor;
@@ -58,45 +63,48 @@ public class MainActivity extends BaseActivity implements MoviesAdapter.OnItemCl
                 ContextCompat.getColor(getMyContext(), R.color.red_gplus),
                 ContextCompat.getColor(getMyContext(), R.color.darker_gray)
         );
-        request(isPopular, swipeView);
 
-        contentResolver = this.getContentResolver();
-//        saveContent();
-        loadContent();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        contentResolver = this.getContentResolver();
+        if (savedInstanceState != null)
+            sort = (SortMovies) savedInstanceState.getSerializable(ENUM);
+        defineSort();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putSerializable(ENUM, sort);
+        super.onSaveInstanceState(outState);
+    }
+
+
+    private void defineSort() {
+        if (sort == null)
+            sort = CLASSIFICATION;
+        switch (sort) {
+            case POPULAR:
+                request(true, swipeView);
+                break;
+            case CLASSIFICATION:
+                request(false, swipeView);
+                break;
+            case FAVORITE:
+                favoriteList();
+                break;
+            default:
+                request(false, swipeView);
+                break;
+        }
+    }
+
     @Override
     public void onStop() {
         super.onStop();
-        if(cursor != null) cursor.close();
-    }
-
-    private void loadContent() {
-        cursor = this.getContentResolver().query(MoviesContract.Movie.CONTENT_URI, null, null, null, null);
-
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-              Log.e(cursor.getString(cursor.getColumnIndex(MoviesContract.Movie.Cols.NAME)));
-              Log.e(cursor.getString(cursor.getColumnIndex(MoviesContract.Movie.Cols.ADDRESS)));
-              Log.e(cursor.getString(cursor.getColumnIndex(MoviesContract.Movie.Cols.CITY)));
-              Log.e(cursor.getString(cursor.getColumnIndex(MoviesContract.Movie.Cols.STATE)));
-              Log.e(cursor.getString(cursor.getColumnIndex(MoviesContract.Movie.Cols.ZIP)));
-                Log.e("----------------------");
-                // E movemos o iterador do cursor para a próxima posição, caso seja possível
-            } while (cursor.moveToNext());
-        }
-
-    }
-
-
-    private void saveContent(){
-        ContentValues val = new ContentValues();
-        val.put(MoviesContract.Movie.Cols.NAME, "Nome");
-        val.put(MoviesContract.Movie.Cols.ADDRESS, "Endereço");
-        val.put(MoviesContract.Movie.Cols.CITY, "Cidade");
-        val.put(MoviesContract.Movie.Cols.STATE, "Estado");
-        val.put(MoviesContract.Movie.Cols.ZIP, "Zip");
-        contentResolver.insert(MoviesContract.Movie.CONTENT_URI, val);
-        loadContent();
+        if (cursor != null) cursor.close();
     }
 
 
@@ -107,7 +115,6 @@ public class MainActivity extends BaseActivity implements MoviesAdapter.OnItemCl
             @Override
             public void onSucessResponse(Response response) {
                 if (response != null && response.body() != null) {
-
                     MoviesResponse moviesResponse = (MoviesResponse) response.body();
                     if (moviesResponse != null && moviesResponse.getResults() != null && !moviesResponse.getResults().isEmpty()) {
 
@@ -151,7 +158,7 @@ public class MainActivity extends BaseActivity implements MoviesAdapter.OnItemCl
         swipeView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                request(isPopular, swipeView);
+                defineSort();
             }
         });
     }
@@ -202,12 +209,16 @@ public class MainActivity extends BaseActivity implements MoviesAdapter.OnItemCl
                     public boolean onMenuItemClick(MenuItem subItem) {
                         switch (subItem.getItemId()) {
                             case R.id.popular:
-                                isPopular = true;
+                                sort = POPULAR;
                                 request(true, swipeView);
                                 break;
                             case R.id.classification:
-                                isPopular = false;
+                                sort = CLASSIFICATION;
                                 request(false, swipeView);
+                                break;
+                            case R.id.favorite:
+                                sort = FAVORITE;
+                                favoriteList();
                                 break;
                         }
                         return true;
@@ -223,5 +234,39 @@ public class MainActivity extends BaseActivity implements MoviesAdapter.OnItemCl
 
         }
     }
+
+    private void favoriteList(){
+        List<ResultResponse> items = new ArrayList<>();
+        items = loadContent();
+        fillLists(rcMovies, new MoviesAdapter(items, MainActivity.this));
+        tvNothing.setVisibility(items.isEmpty() ? View.VISIBLE : View.GONE);
+    }
+
+    private List<ResultResponse> loadContent() {
+        cursor = this.getContentResolver().query(MoviesContract.Movie.CONTENT_URI, null, null, null, null);
+        List<ResultResponse> items = new ArrayList<>();
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                ResultResponse resultResponse = new ResultResponse(
+                        cursor.getString(cursor.getColumnIndex(MoviesContract.Movie.Cols.MOVIE_ID)),
+                        cursor.getDouble(cursor.getColumnIndex(MoviesContract.Movie.Cols.VOTE_AVERAGE)),
+                        cursor.getString(cursor.getColumnIndex(MoviesContract.Movie.Cols.TITLE)),
+                        cursor.getString(cursor.getColumnIndex(MoviesContract.Movie.Cols.POSTER)),
+                        cursor.getString(cursor.getColumnIndex(MoviesContract.Movie.Cols.LANGUAGE)),
+                        cursor.getString(cursor.getColumnIndex(MoviesContract.Movie.Cols.ORIGINAL_TITLE)),
+                        cursor.getString(cursor.getColumnIndex(MoviesContract.Movie.Cols.PLOT)),
+                        cursor.getString(cursor.getColumnIndex(MoviesContract.Movie.Cols.RELEASE_DATE)));
+                items.add(resultResponse);
+            } while (cursor.moveToNext());
+        }
+        return items;
+    }
+
+    public enum SortMovies {
+        POPULAR,
+        CLASSIFICATION,
+        FAVORITE;
+    }
+
 
 }

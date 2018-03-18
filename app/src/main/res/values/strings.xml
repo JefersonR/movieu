@@ -38,6 +38,7 @@
     <string name="title_menu">Menu</string>
     <string name="str_sort_popular">Ordenar: Popularidade</string>
     <string name="str_sort_classification">Ordenar: Classificação</string>
+    <string name="str_sort_favoritos">Ordenar: Favoritos</string>
     <string name="title_evaluation">Avaliação</string>
     <string name="title_videos">Trailers</string>
     <string name="title_reviews">Revisões</string>
@@ -50,6 +51,8 @@
     <string name="str_language">Idioma original: %s</string>
     <string name="str_author">Autor: %s</string>
     <string name="content_authority">br.udacity.app</string>
+    <string name="str_trailer">Trailer</string>
+    <string name="str_query_delete"> %s = ? </string>
 
 
 </resources>

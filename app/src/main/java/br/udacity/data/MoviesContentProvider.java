@@ -26,13 +26,13 @@ public class MoviesContentProvider extends ContentProvider {
     @Override
     public String getType(Uri uri) {
         final int match = MoviesContract.URI_MATCHER.match(uri);
-        switch(match){
+        switch (match) {
             case MoviesContract.Movie.PATH_TOKEN:
                 return MoviesContract.Movie.CONTENT_TYPE_DIR;
             case MoviesContract.Movie.PATH_FOR_ID_TOKEN:
                 return MoviesContract.Movie.CONTENT_ITEM_TYPE;
             default:
-                throw new UnsupportedOperationException ("URI " + uri + " is not supported.");
+                throw new UnsupportedOperationException("URI " + uri + " is not supported.");
         }
     }
 
@@ -40,8 +40,8 @@ public class MoviesContentProvider extends ContentProvider {
     public Uri insert(@NonNull Uri uri, ContentValues values) {
         SQLiteDatabase db = movieDB.getWritableDatabase();
         int token = MoviesContract.URI_MATCHER.match(uri);
-        switch(token){
-            case MoviesContract.Movie.PATH_TOKEN:{
+        switch (token) {
+            case MoviesContract.Movie.PATH_TOKEN: {
                 long id = db.insert(MoviesContract.Movie.NAME, null, values);
                 getContext().getContentResolver().notifyChange(uri, null);
                 return MoviesContract.Movie.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
@@ -57,14 +57,15 @@ public class MoviesContentProvider extends ContentProvider {
                         String[] selectionArgs, String sortOrder) {
         SQLiteDatabase db = movieDB.getReadableDatabase();
         final int match = MoviesContract.URI_MATCHER.match(uri);
-        switch(match){
-            // retrieve restaurant list
-            case MoviesContract.Movie.PATH_TOKEN:{
+        switch (match) {
+            // retrieve movie list
+            case MoviesContract.Movie.PATH_TOKEN: {
                 SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
                 builder.setTables(MoviesContract.Movie.NAME);
                 return builder.query(db, null, null, null, null, null, null);
             }
-            default: return null;
+            default:
+                return null;
         }
     }
 
@@ -76,6 +77,31 @@ public class MoviesContentProvider extends ContentProvider {
 
     @Override
     public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
-        return 0;
+        SQLiteDatabase db = movieDB.getWritableDatabase();
+        final int match = MoviesContract.URI_MATCHER.match(uri);
+        int deleteCount = 0;
+        switch (match) {
+            case MoviesContract.Movie.PATH_TOKEN: {
+                deleteCount = db.delete(MoviesContract.Movie.NAME, MoviesContract.Movie.Cols.MOVIE_ID + "="
+                        + selection, null);
+                if (getContext() != null)
+                    getContext().getContentResolver().notifyChange(uri, null);
+            }
+        }
+        return deleteCount;
+    }
+
+
+    public boolean contains(String movieID, Context context) {
+        movieDB = new MoviesDB(context);
+        SQLiteDatabase db = movieDB.getWritableDatabase();
+        String Query = "Select * from " + MoviesContract.Movie.NAME + " where " + MoviesContract.Movie.Cols.MOVIE_ID + " = " + movieID;
+        Cursor cursor = db.rawQuery(Query, null);
+        if (cursor.getCount() <= 0) {
+            cursor.close();
+            return false;
+        }
+        cursor.close();
+        return true;
     }
 }

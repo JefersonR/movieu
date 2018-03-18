@@ -16,4 +16,8 @@
         android:id="@+id/classification"
         android:title="@string/str_sort_classification"/>
 
+    <item
+        android:id="@+id/favorite"
+        android:title="@string/str_sort_favoritos"/>
+
 </menu>

@@ -22,7 +22,7 @@
             android:paddingEnd="16dp"
             android:paddingStart="@dimen/regular_space_one"
             android:text="@string/label_movie_not_found"
-            android:textColor="@color/black"
+            android:textColor="@color/white_background"
             android:textSize="22sp"
             android:visibility="gone" />
 

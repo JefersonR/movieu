@@ -36,6 +36,7 @@ public abstract class BaseActivity<T> extends AppCompatActivity implements Const
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.savedInstanceState = savedInstanceState;
         setContentView(R.layout.activity_main_base);
         init();
         setLayout(myView());
