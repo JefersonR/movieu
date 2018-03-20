@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
@@ -42,10 +43,12 @@ public class MainActivity extends BaseActivity implements MoviesAdapter.OnItemCl
     private CustomTextView tvNothing;
     final static String MOVIE = "MOVIE";
     final static String ENUM = "ENUM";
+    final static String RECYCLER = "RECYCLER";
     private SortMovies sort;
 
     ContentResolver contentResolver;
     Cursor cursor;
+    private Parcelable layoutManagerSavedState;
 
 
     @Override
@@ -63,21 +66,20 @@ public class MainActivity extends BaseActivity implements MoviesAdapter.OnItemCl
                 ContextCompat.getColor(getMyContext(), R.color.red_gplus),
                 ContextCompat.getColor(getMyContext(), R.color.darker_gray)
         );
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         contentResolver = this.getContentResolver();
-        if (savedInstanceState != null)
-            sort = (SortMovies) savedInstanceState.getSerializable(ENUM);
+        if (savedInstanceState != null) {
+            sort         = (SortMovies) savedInstanceState.getSerializable(ENUM);
+            layoutManagerSavedState = savedInstanceState.getParcelable(RECYCLER);
+        }
+
         defineSort();
+
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putSerializable(ENUM, sort);
+        outState.putParcelable(RECYCLER, rcMovies.getLayoutManager().onSaveInstanceState());
         super.onSaveInstanceState(outState);
     }
 
@@ -138,6 +140,9 @@ public class MainActivity extends BaseActivity implements MoviesAdapter.OnItemCl
         recyclerView.setAdapter(adapter);
         GridLayoutManager grid = new GridLayoutManager(getMyContext(), numberOfColumns());
         recyclerView.setLayoutManager(grid);
+        if (layoutManagerSavedState != null) {
+            recyclerView.getLayoutManager().onRestoreInstanceState(layoutManagerSavedState);
+        }
 
     }
 
@@ -158,6 +163,7 @@ public class MainActivity extends BaseActivity implements MoviesAdapter.OnItemCl
         swipeView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                layoutManagerSavedState = null;
                 defineSort();
             }
         });

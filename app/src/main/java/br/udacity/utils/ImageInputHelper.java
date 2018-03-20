@@ -82,17 +82,14 @@ public class ImageInputHelper {
 
         if ((requestCode == REQUEST_PICTURE_FROM_GALLERY) && (resultCode == Activity.RESULT_OK)) {
 
-            Log.d(TAG, "Image selected from gallery");
             imageActionListener.onImageSelectedFromGallery(data.getData(), tempFileFromSource);
 
         } else if ((requestCode == REQUEST_PICTURE_FROM_CAMERA) && (resultCode == Activity.RESULT_OK)) {
 
-            Log.d(TAG, "Image selected from camera");
             imageActionListener.onImageTakenFromCamera(tempUriFromSource, tempFileFromSource);
 
         } else if ((requestCode == REQUEST_CROP_PICTURE) && (resultCode == Activity.RESULT_OK)) {
 
-            Log.d(TAG, "Image returned from crop");
             imageActionListener.onImageCropped(tempUriFromCrop, tempFileFromCrop);
         }
     }
@@ -103,17 +100,13 @@ public class ImageInputHelper {
      */
     public void selectImageFromGallery() {
         checkListener();
-        Log.e("TESTE ->", "GALERIA");
         if (tempFileFromSource == null) {
             try {
                 tempFileFromSource = File.createTempFile("choose", ".png", mContext.getExternalCacheDir());
                 tempUriFromSource = Uri.fromFile(tempFileFromSource);
             } catch (IOException e) {
-                Log.e("TESTE-", "ERRO AQUI");
                 e.printStackTrace();
             }
-        }else{
-            Log.e("GALERIA", "NÃO NULL");
         }
 
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);

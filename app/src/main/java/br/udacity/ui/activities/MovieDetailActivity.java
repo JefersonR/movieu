@@ -4,10 +4,10 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -53,11 +53,12 @@ public class MovieDetailActivity extends BaseActivity implements TrailerAdapter.
     private RecyclerView rcVideos;
     private RecyclerView rcReviews;
     private ImageView imgFavorite;
+    private NestedScrollView nestedScrollview;
 
     private ResultResponse movie;
-    ContentResolver contentResolver;
-    Cursor cursor;
-    MoviesContentProvider provider;
+    private ContentResolver contentResolver;
+    private MoviesContentProvider provider;
+    final static String POSITION = "POSITION";
 
     @Override
     protected DetailImpl getControllerImpl() {
@@ -79,11 +80,14 @@ public class MovieDetailActivity extends BaseActivity implements TrailerAdapter.
         txtPlot = (TextView) findViewById(R.id.txt_plot);
         rcVideos = (RecyclerView) findViewById(R.id.rc_videos);
         rcReviews = (RecyclerView) findViewById(R.id.rc_reviews);
+        nestedScrollview = (NestedScrollView) findViewById(R.id.nestedScrollview);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelable(MOVIE, movie);
+        outState.putParcelable(MOVIE, movie);;
+        outState.putIntArray(POSITION,
+                new int[]{ nestedScrollview.getScrollX(), nestedScrollview.getScrollY()});
         super.onSaveInstanceState(outState);
     }
 
@@ -93,6 +97,7 @@ public class MovieDetailActivity extends BaseActivity implements TrailerAdapter.
         setToolbar(R.id.toolbar, "", true);
         if (savedInstanceState != null) {
             movie = savedInstanceState.getParcelable(MOVIE);
+            onRestoreInstance(savedInstanceState);
         }
         contentResolver = this.getContentResolver();
         provider = new MoviesContentProvider();
@@ -108,6 +113,15 @@ public class MovieDetailActivity extends BaseActivity implements TrailerAdapter.
         }
     }
 
+    protected void onRestoreInstance(Bundle savedInstanceState) {
+        final int[] position = savedInstanceState.getIntArray(POSITION);
+        if(position != null)
+            nestedScrollview.post(new Runnable() {
+                public void run() {
+                    nestedScrollview.scrollTo(position[0], position[1]);
+                }
+            });
+    }
 
     @Override
     protected void defineListeners() {
